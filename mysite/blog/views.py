@@ -29,3 +29,29 @@ class PostListView(ListView):
     context_object_name = 'posts'
     paginate_by = 3
     template_name = 'blog/post/list.html'
+
+from .forms import EmailPostForm
+
+from django.core.mail import send_mail
+
+def post_share(request, post_id):
+    # 通过id 获取 post 对象
+    post = get_object_or_404(Post, id=post_id, status='published')
+    sent = False
+    
+    if request.method == "POST":
+        # 表单被提交
+        form = EmailPostForm(request.POST)
+        if form.is_valid():
+            # 验证表单数据
+            cd = form.cleaned_data
+            post_url = request.build_absolute_uri(post.get_absolute_url())
+            subject = '{} ({}) recommends you reading "{}"'.format(cd['name'], cd['email'], post.title)
+            message = 'Read "{}" at {}\n\n{}\'s comments:{}'.format(post.title, post_url, cd['name'], cd['comments'])
+            send_mail(subject, message, '2297009607@qq.com', [cd['to']])
+            sent = True
+            
+            # 发送邮件......
+    else:
+        form = EmailPostForm()
+    return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
