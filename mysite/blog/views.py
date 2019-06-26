@@ -11,8 +11,17 @@ from .forms import EmailPostForm, CommentForm
 
 from django.core.mail import send_mail
 
-def post_list(request):
+from taggit.models import Tag
+
+def post_list(request, tag_slug=None):
+    tag = None
+    
     object_list = Post.published.all()
+    
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        object_list = object_list.filter(tags__in=[tag])
+    
     paginator = Paginator(object_list, 3)  # 每页显示3篇文章
     page = request.GET.get('page')
     try:
@@ -23,7 +32,7 @@ def post_list(request):
     except EmptyPage:
         # 如果页数超出总页数就返回最后一页
         posts = paginator.page(paginator.num_pages)
-    return render(request, 'blog/post/list.html', {'page': page, 'posts': posts})
+    return render(request, 'blog/post/list.html', {'page': page, 'posts': posts, 'tag': tag})
 
 def post_detail(request, year, month, day, post):
     post = get_object_or_404(Post, slug=post, status="published", publish__year=year, publish__month=month,publish__day=day)
