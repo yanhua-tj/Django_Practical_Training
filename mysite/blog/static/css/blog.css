@@ -30,7 +30,7 @@ h2 {
     float:right;
     width:30%;
     padding:10px;
-    background:#efefef; 
+    
     height:100%;
 }
 
@@ -83,7 +83,7 @@ input[type=submit] {
     padding:10px;
 }
 .comment:nth-child(even) {
-    background:#efefef;
+    
 }
 .comment .info {
     font-weight:bold;
