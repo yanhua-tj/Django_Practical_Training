@@ -1,4 +1,4 @@
-#!/home/yanhua/Desktop/test/Django/my_env/bin/python
+#!/home/yanhua/Desktop/Django/my_env/bin/python
 
 import sys
 import getopt
